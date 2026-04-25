@@ -6,13 +6,12 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 func main() {
 	if len(os.Args) != 3 {
 		fmt.Println("Usage: go-reloaded <input_file> <output_file>")
-		return
+		os.Exit(1)
 	}
 
 	content, err := readFile(os.Args[1])
@@ -30,6 +29,12 @@ func main() {
 	}
 }
 
+// readFile reads the entire content of the file at the given path and returns it as a string.
+func readFile(filename string) (string, error) {
+	data, err := os.ReadFile(filename)
+	return string(data), err
+}
+
 func processText(content string) string {
 	content = processModifiers(content)
 	content = fixPunctuation(content)
@@ -39,16 +44,10 @@ func processText(content string) string {
 	return content
 }
 
-// readFile reads the entire content of the file at the given path and returns it as a string.
-func readFile(filename string) (string, error) {
-	data, err := os.ReadFile(filename)
-	return string(data), err
-}
-
 // writeFile writes the given content string to a file at the specified path,
 // creating or overwriting it with permissions 0644.
 func writeFile(filename, content string) error {
-	return os.WriteFile(filename, []byte(content), 0644)
+	return os.WriteFile(filename, []byte(content), 0o644)
 }
 
 // hexToDecimal converts a hexadecimal string to its decimal representation.
@@ -56,7 +55,8 @@ func writeFile(filename, content string) error {
 func hexToDecimal(hexStr string) string {
 	num, err := strconv.ParseInt(hexStr, 16, 0)
 	if err != nil {
-		return hexStr
+		fmt.Println("Error: The entered Number is not an HexaDecimal")
+		os.Exit(1)
 	}
 	return strconv.Itoa(int(num))
 }
@@ -66,7 +66,8 @@ func hexToDecimal(hexStr string) string {
 func binToDecimal(binStr string) string {
 	num, err := strconv.ParseInt(binStr, 2, 0)
 	if err != nil {
-		return binStr
+		fmt.Println("Error: The entered Number is not an Binary Number")
+		os.Exit(1)
 	}
 	return strconv.Itoa(int(num))
 }
@@ -185,15 +186,8 @@ func toLowerCase(word string) string {
 // capitalizeFirst returns the word with only its first letter uppercased
 // and the rest lowercased.
 func capitalizeFirst(word string) string {
-	runes := []rune{}
-	for i, ch := range word {
-		if i == 0 {
-			runes = append(runes, unicode.ToUpper(ch))
-		} else {
-			runes = append(runes, unicode.ToLower(ch))
-		}
-	}
-	return string(runes)
+	words := []rune(word)
+	return strings.ToTitle(string(words[0])) + strings.ToLower(string(words[1:]))
 }
 
 // parseWordCount strips the closing parenthesis from a token like "3)" and
@@ -204,7 +198,7 @@ func parseWordCount(token string, available int) int {
 	count, err := strconv.Atoi(trimmed)
 	if err != nil {
 		fmt.Println("Error: expected a number in modifier, got:", token)
-		return 0
+		os.Exit(1)
 	}
 	if count > available {
 		fmt.Printf("Warning: modifier count (%d) exceeds available words (%d); applying to all available words.\n", count, available)
