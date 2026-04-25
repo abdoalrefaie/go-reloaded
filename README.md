@@ -1,4 +1,3 @@
-1
 Go Reloaded: Text Formatter
 Go Reloaded is a command-line utility written in Go that reads a text file, applies a series of string manipulations and grammatical formatting rules, and writes the corrected text to an output file.
 
