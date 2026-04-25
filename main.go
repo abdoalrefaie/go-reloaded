@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) != 3 {
-		fmt.Println("Usage: go-reloaded <input_file> <output_file>")
+		fmt.Println("Usage: go run  <file_name>.go <input_file> <output_file>")
 		os.Exit(1)
 	}
 
