@@ -18,6 +18,9 @@ func main() {
 	if err != nil {
 		fmt.Println("Error: could not read input file —", err)
 		os.Exit(1)
+	} else if content == "" {
+		fmt.Println("Error: The input file is empty")
+		os.Exit(1)
 	}
 
 	// Apply all text transformations in order
@@ -53,7 +56,7 @@ func writeFile(filename, content string) error {
 // hexToDecimal converts a hexadecimal string to its decimal representation.
 // Returns the original string if parsing fails.
 func hexToDecimal(hexStr string) string {
-	num, err := strconv.ParseInt(hexStr, 16, 0)
+	num, err := strconv.ParseInt(hexStr, 16, 64)
 	if err != nil {
 		fmt.Println("Error: The entered Number is not an HexaDecimal")
 		os.Exit(1)
@@ -64,7 +67,7 @@ func hexToDecimal(hexStr string) string {
 // binToDecimal converts a binary string to its decimal representation.
 // Returns the original string if parsing fails.
 func binToDecimal(binStr string) string {
-	num, err := strconv.ParseInt(binStr, 2, 0)
+	num, err := strconv.ParseInt(binStr, 2, 64)
 	if err != nil {
 		fmt.Println("Error: The entered Number is not an Binary Number")
 		os.Exit(1)
@@ -105,7 +108,7 @@ func processModifiers(text string) string {
 			if len(result) == 0 {
 				break
 			}
-			result[len(result)-1] = capitalizeFirst(result[len(result)-1])
+			result[len(result)-1] = capitalize(result[len(result)-1])
 		case "(up,":
 			count := parseWordCount(tokens[i+1], len(result))
 			for n := 0; n < count; n++ {
@@ -129,7 +132,7 @@ func processModifiers(text string) string {
 			for n := 0; n < count; n++ {
 				idx := len(result) - count + n
 				if idx >= 0 {
-					result[idx] = capitalizeFirst(result[idx])
+					result[idx] = capitalize(result[idx])
 				}
 			}
 			i++ // skip the number token
@@ -185,7 +188,7 @@ func toLowerCase(word string) string {
 
 // capitalizeFirst returns the word with only its first letter uppercased
 // and the rest lowercased.
-func capitalizeFirst(word string) string {
+func capitalize(word string) string {
 	words := []rune(word)
 	return strings.ToTitle(string(words[0])) + strings.ToLower(string(words[1:]))
 }
